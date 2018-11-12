@@ -10,6 +10,13 @@
 
 #define QF_MAX_ACTIVE 32
 
+// various QF object sizes configuration for this port
+#define QF_EVENT_SIZ_SIZE    4
+#define QF_EQUEUE_CTR_SIZE   4
+#define QF_MPOOL_SIZ_SIZE    4
+#define QF_MPOOL_CTR_SIZE    4
+#define QF_TIMEEVT_CTR_SIZE  4
+
 #if 0
 #define QF_INT_DISABLE() \
     {}

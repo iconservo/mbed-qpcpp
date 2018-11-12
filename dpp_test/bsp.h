@@ -1,13 +1,13 @@
 //****************************************************************************
-// Product: Simple Blinky example
-// Last Updated for Version: 5.4.0
-// Date of the Last Update:  2015-05-04
+// Product: DPP example
+// Last Updated for Version: 6.1.2
+// Date of the Last Update:  2018-03-08
 //
 //                    Q u a n t u m     L e a P s
 //                    ---------------------------
 //                    innovating embedded systems
 //
-// Copyright (C) 2002-2013 Quantum Leaps, LLC. All rights reserved.
+// Copyright (C) Quantum Leaps, LLC. All rights reserved.
 //
 // This program is open source software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as published
@@ -28,32 +28,32 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 //
 // Contact information:
-// Web  : https://state-machine.com
-// Email: info@state-machine.com
+// https://www.state-machine.com
+// mailto:info@state-machine.com
 //****************************************************************************
-#include "qpcpp.h"
-#include "bsp.h"
-#include "blinky.h"
+#ifndef bsp_h
+#define bsp_h
 
-void qpcpp_test() {
-    static QEvt const* blinkyQSto[10];  // Event queue storage for Blinky
+namespace DPP {
 
-    printf("QP/C++ test: Hello!\r\n");
+class BSP {
+public:
+    enum { TICKS_PER_SEC = 100 };
 
-    BSP_init();  // initialize the Board Support Package
-    printf("QP/C++ test: after BSP_init()\r\n");
+    static void init(int argc, char **argv);
+    static void displayPaused(uint8_t const paused);
+    static void displayPhilStat(uint8_t const n, char_t const *stat);
+    static void terminate(int16_t const result);
 
-    QF::init();  // initialize the framework and the underlying RT kernel
-    printf("QP/C++ test: after QF::init()\r\n");
+    static void randomSeed(uint32_t const seed); // random seed
+    static uint32_t random(void);                // pseudo-random generator
 
-    // publish-subscribe not used, no call to QF::psInit()
-    // dynamic event allocation not used, no call to QF::poolInit()
+    // for testing...
+    static void wait4SW1(void);
+    static void ledOn(void);
+    static void ledOff(void);
+};
 
-    // instantiate and start the active objects...
-    AO_Blinky->start(osPriorityNormal,               // priority
-                     blinkyQSto, Q_DIM(blinkyQSto),  // event queue
-                     (void*)0, 0U);                  // stack (unused)
+} // namespace DPP
 
-    printf("QP/C++ test: before QF::run()\r\n");
-    QF::run();  // run the QF application
-}
+#endif // bsp_h

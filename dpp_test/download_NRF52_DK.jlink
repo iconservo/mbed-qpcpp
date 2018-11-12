@@ -1,0 +1,5 @@
+r
+loadfile BUILD/NRF52_DK/GCC_ARM/mbed-qpcpp.hex
+go
+exit
+

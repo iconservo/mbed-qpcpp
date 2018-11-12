@@ -32,6 +32,8 @@ static events::EventQueue event_queue(2 * EVENTS_EVENT_SIZE);
     
 //****************************************************************************
 void QF::init(void) {
+    QF_PORT_DEBUG_PRINTF("QF::init\r\n");
+    
     // Init the startup mutex with the default non-recursive initializer
     // startup_mutex
 
@@ -61,7 +63,9 @@ int_t QF::run(void) {
     osThreadSetPriority(Thread::gettid(), tick_priority);
     //!FIXME for Mbed-OS v5.10
     //osThreadSetPriority(ThisThread::get_id(), tick_priority);
-        
+
+    QF_PORT_DEBUG_PRINTF("QF::run before startup_mutex.unlock()\r\n");
+    
     // Unlock the startup mutex to unblock any active objects started before
     // calling QF::run()
     startup_mutex.unlock();
@@ -76,7 +80,7 @@ int_t QF::run(void) {
     }
 #endif
     
-#if 1    
+#if 1   
     event_queue.call_every(tick_period_ms, QF_onClockTick);    
     // Process the event queue.
     event_queue.dispatch_forever();
