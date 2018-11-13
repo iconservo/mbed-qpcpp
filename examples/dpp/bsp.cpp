@@ -127,7 +127,7 @@ void QF::onStartup(void) { // QS startup callback
 #if 0
     QF_consoleSetup();
 #endif    
-    QF_setTickRate(DPP::BSP::TICKS_PER_SEC, 30); // desired tick rate/prio
+    QF_setTickRate(DPP::BSP::TICKS_PER_SEC, osPriorityHigh); // desired tick rate/prio
 }
 //............................................................................
 void QF::onCleanup(void) {  // cleanup callback
@@ -139,6 +139,7 @@ void QF::onCleanup(void) {  // cleanup callback
 //............................................................................
 void QF_onClockTick(void) {
     QF::TICK_X(0U, &DPP::l_clock_tick); // process time events at rate 0
+    // printf("tick\r\n");
 
 #if 0    
     QS_RX_INPUT(); // handle the QS-RX input

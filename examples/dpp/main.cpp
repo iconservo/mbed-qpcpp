@@ -7,12 +7,10 @@
 
 using namespace DPP;
 
-#if 1
 FileHandle* mbed::mbed_override_console(int fd) {
     static SeggerRTT rtt;
     return &rtt;
 }
-#endif
 
 void tick_callback(void) {
     static int tick_cntr = 0;
@@ -25,9 +23,11 @@ int main(int argc, char *argv[]) {
     static QP::QSubscrList subscrSto[DPP::MAX_PUB_SIG];
     static QF_MPOOL_EL(DPP::TableEvt) smlPoolSto[2*N_PHILO];
 
-    printf("\r\nQP/C++ test init\r\n");
-    
+    printf("\r\nQP/C++ DPP example init\r\n");
+
+#if 0    
     mbed::mbed_event_queue()->call_every(1000, tick_callback);
+#endif
     
     QP::QF::init();  // initialize the framework and the underlying RT kernel
 
@@ -58,28 +58,24 @@ int main(int argc, char *argv[]) {
 
     // start the active objects...
     for (uint8_t n = 0U; n < N_PHILO; ++n) {
-        AO_Philo[n]->start(osPriorityNormal + (uint8_t)(n + 1U),
+        AO_Philo[n]->start(osPriorityNormal + n + 1U,
+        //AO_Philo[n]->start(osPriorityNormal,
                            philoQueueSto[n], Q_DIM(philoQueueSto[n]),
                            (void *)0, 0U);
     }
-#if 0    
-    AO_Table->start(osPriorityNormal + (uint8_t)(N_PHILO + 1U),
+    AO_Table->start(osPriorityNormal + N_PHILO + 1U,
+    //AO_Table->start(osPriorityNormal,
                     tableQueueSto, Q_DIM(tableQueueSto),
                     (void *)0, 0U);
-#endif
-
-    printf("Before AO_Blinky start\r\n");
     
+#if 0
     static QEvt const* blinkyQSto[10];  // Event queue storage for Blinky
     
     // instantiate and start the active objects...
     AO_Blinky->start(osPriorityNormal,               // priority
                      blinkyQSto, Q_DIM(blinkyQSto),  // event queue
                      (void*)0, 0U);                  // stack (unused)    
-
-    printf("Before QP::QF::run()\r\n");
-
-    wait(0.5);
+#endif
     
     return QP::QF::run(); // run the QF application
 }

@@ -11,12 +11,6 @@
 
 #include "mbed.h"
 
-#if QF_PORT_DEBUG
-#define QF_PORT_DEBUG_PRINTF(...) printf(__VA_ARGS__)
-#else
-#define QF_PORT_DEBUG_PRINTF(...)
-#endif
-
 namespace QP {
 
 Q_DEFINE_THIS_MODULE("qf_port")
@@ -106,12 +100,13 @@ void QF::stop(void) {
 }
 //............................................................................
 void QF::thread_(QActive* act) {
-    // block this thread until the startup mutex is unlocked from QF::run()
+    // block this thread until the startup mutex is unlocked from QF::run()    
     startup_mutex.lock();
     startup_mutex.unlock();
 
     // loop until m_thread is cleared in QActive::stop()
     do {
+        wait(0.05);
         QEvt const* e = act->get_();  // wait for event
         act->dispatch(e);             // dispatch to the active object's state machine
         gc(e);                        // check if the event is garbage, and collect it if so

@@ -17,5 +17,4 @@ mbed-os/features/nanostack/*
 mbed-os/features/nvstore/*
 mbed-os/features/storage/*
 mbed-os/features/unsupported/*
-microrl/examples/*
-blinky_test/*
+../blinky_test/*

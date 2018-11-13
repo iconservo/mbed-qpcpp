@@ -3,6 +3,12 @@
 
 #include "mbed.h"
 
+#if QF_PORT_DEBUG
+#define QF_PORT_DEBUG_PRINTF(...) printf(__VA_ARGS__)
+#else
+#define QF_PORT_DEBUG_PRINTF(...)
+#endif
+
 #define QF_EQUEUE_TYPE QEQueue
 #define QF_THREAD_TYPE int
 
@@ -17,36 +23,10 @@
 #define QF_MPOOL_CTR_SIZE    4
 #define QF_TIMEEVT_CTR_SIZE  4
 
-#if 0
-#define QF_INT_DISABLE() \
-    {}
-#define QF_INT_ENABLE() \
-    {}
-
-#define QF_CRIT_ENTRY(stat_) \
-    {}
-#define QF_CRIT_EXIT(stat_) \
-    {}
-#endif
-
 #define QF_INT_DISABLE() \
     { CriticalSectionLock::enable(); }
 #define QF_INT_ENABLE() \
     { CriticalSectionLock::disable(); }
-
-#if 0
-// QF critical section
-// #define QF_CRIT_STAT_TYPE not defined
-#define QF_CRIT_ENTRY(stat_) { printf("QF_CRIT_ENTRY %s:%d\r\n", __FILE__, __LINE__); CriticalSectionLock::enable(); /* CriticalSectionLock::disable(); */ }
-#define QF_CRIT_EXIT(stat_)  { CriticalSectionLock::disable(); printf("QF_CRIT_EXIT %s:%d\r\n", __FILE__, __LINE__); } 
-#endif
-
-#if 0
-// QF critical section
-#define QF_CRIT_STAT_TYPE Mutex
-#define QF_CRIT_ENTRY(mutex_) mutex_.lock()
-#define QF_CRIT_EXIT(mutex_)  mutex_.unlock()
-#endif
 
 class OneSlotSemaphore : public Semaphore {
    public:   
@@ -57,9 +37,6 @@ class OneSlotSemaphore : public Semaphore {
 #define QF_CRIT_STAT_TYPE OneSlotSemaphore
 #define QF_CRIT_ENTRY(semaphore) semaphore.wait()
 #define QF_CRIT_EXIT(semaphore)  semaphore.release()
-
-// Activate the QF ISR API
-//#define QF_ISR_API    1
 
 #include "qep_port.h"  // QEP port
 #include "qequeue.h"   // this QP port uses the native QF event queue
@@ -77,15 +54,22 @@ void QF_onClockTick(void);
 }  // namespace QP
 
 #ifdef QP_IMPL
+
+#define QF_PORT_EQUEUE_DEBUG_PRINTF(...)
+
 #define QACTIVE_EQUEUE_WAIT_(me_)                                 \
     while ((me_)->m_eQueue.m_frontEvt == static_cast<QEvt*>(0)) { \
-        (me_)->m_osObject.wait_all(0x1);                          \
+        QF_PORT_EQUEUE_DEBUG_PRINTF("QACTIVE_EQUEUE_WAIT_\r\n"); \
+        (me_)->m_osObject.wait_all(0x01);  \
     }
 
 #define QACTIVE_EQUEUE_SIGNAL_(me_)  \
     do {                             \
-        (me_)->m_osObject.set(0x1);  \
+        QF_PORT_EQUEUE_DEBUG_PRINTF("QACTIVE_EQUEUE_SIGNAL_\r\n"); \
+        (me_)->m_osObject.set(0x01);  \
     } while (0)
+
+
 
 // Mbed-specific scheduler locking (not used at this point)
 #define QF_SCHED_STAT_

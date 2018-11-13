@@ -22,8 +22,7 @@
 namespace DPP {
 
 enum DPPSignals {
-    TIMEOUT_SIG = QP::Q_USER_SIG, // time event timeout
-    EAT_SIG,        // published by Table to let a philosopher eat
+    EAT_SIG = QP::Q_USER_SIG, // published by Table to let a philosopher eat
     DONE_SIG,       // published by Philosopher when done eating
     PAUSE_SIG,      // published by BSP to pause the application
     SERVE_SIG,      // published by BSP to serve re-start serving forks

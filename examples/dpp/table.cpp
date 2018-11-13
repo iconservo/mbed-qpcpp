@@ -96,6 +96,21 @@ QP::QState Table::initial(Table * const me, QP::QEvt const * const e) {
     //${AOs::Table::SM::initial}
     (void)e; // suppress the compiler warning about unused parameter
 
+    QS_OBJ_DICTIONARY(&l_table);
+    QS_FUN_DICTIONARY(&QP::QHsm::top);
+    QS_FUN_DICTIONARY(&Table::initial);
+    QS_FUN_DICTIONARY(&Table::active);
+    QS_FUN_DICTIONARY(&Table::serving);
+    QS_FUN_DICTIONARY(&Table::paused);
+
+    QS_SIG_DICTIONARY(DONE_SIG,      (void *)0); // global signals
+    QS_SIG_DICTIONARY(EAT_SIG,       (void *)0);
+    QS_SIG_DICTIONARY(PAUSE_SIG,     (void *)0);
+    QS_SIG_DICTIONARY(SERVE_SIG,     (void *)0);
+    QS_SIG_DICTIONARY(TEST_SIG,      (void *)0);
+
+    QS_SIG_DICTIONARY(HUNGRY_SIG,    me); // signal just for Table
+
     me->subscribe(DONE_SIG);
     me->subscribe(PAUSE_SIG);
     me->subscribe(SERVE_SIG);
@@ -106,11 +121,6 @@ QP::QState Table::initial(Table * const me, QP::QEvt const * const e) {
         me->m_isHungry[n] = false;
         BSP::displayPhilStat(n, THINKING);
     }
-
-    QS_FUN_DICTIONARY(&active);
-    QS_FUN_DICTIONARY(&serving);
-    QS_FUN_DICTIONARY(&paused);
-
     return Q_TRAN(&serving);
 }
 //${AOs::Table::SM::active} ..................................................

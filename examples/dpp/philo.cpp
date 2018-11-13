@@ -66,6 +66,10 @@ inline uint8_t PHILO_ID(Philo const * const me) {
     return static_cast<uint8_t>(me - l_philo);
 }
 
+enum InternalSignals {           // internal signals
+    TIMEOUT_SIG = MAX_SIG
+};
+
 // Global objects ------------------------------------------------------------
 QP::QActive * const AO_Philo[N_PHILO] = { // "opaque" pointers to Philo AO
     &l_philo[0],
@@ -100,10 +104,15 @@ QP::QState Philo::initial(Philo * const me, QP::QEvt const * const e) {
     if (!registered) {
         registered = true;
 
+        QS_OBJ_DICTIONARY(&l_philo[0]);
         QS_OBJ_DICTIONARY(&l_philo[0].m_timeEvt);
+        QS_OBJ_DICTIONARY(&l_philo[1]);
         QS_OBJ_DICTIONARY(&l_philo[1].m_timeEvt);
+        QS_OBJ_DICTIONARY(&l_philo[2]);
         QS_OBJ_DICTIONARY(&l_philo[2].m_timeEvt);
+        QS_OBJ_DICTIONARY(&l_philo[3]);
         QS_OBJ_DICTIONARY(&l_philo[3].m_timeEvt);
+        QS_OBJ_DICTIONARY(&l_philo[4]);
         QS_OBJ_DICTIONARY(&l_philo[4].m_timeEvt);
 
         QS_FUN_DICTIONARY(&Philo::initial);
@@ -111,6 +120,8 @@ QP::QState Philo::initial(Philo * const me, QP::QEvt const * const e) {
         QS_FUN_DICTIONARY(&Philo::hungry);
         QS_FUN_DICTIONARY(&Philo::eating);
     }
+    QS_SIG_DICTIONARY(HUNGRY_SIG, me);  // signal for each Philos
+    QS_SIG_DICTIONARY(TIMEOUT_SIG, me); // signal for each Philos
 
     me->subscribe(EAT_SIG);
     me->subscribe(TEST_SIG);
@@ -122,7 +133,6 @@ QP::QState Philo::thinking(Philo * const me, QP::QEvt const * const e) {
     switch (e->sig) {
         //${AOs::Philo::SM::thinking}
         case Q_ENTRY_SIG: {
-            printf("think_time() = %d\r\n", think_time());
             me->m_timeEvt.armX(think_time(), 0U);
             status_ = Q_HANDLED();
             break;
@@ -135,7 +145,6 @@ QP::QState Philo::thinking(Philo * const me, QP::QEvt const * const e) {
         }
         //${AOs::Philo::SM::thinking::TIMEOUT}
         case TIMEOUT_SIG: {
-            printf("TIMEOUT\r\n");
             status_ = Q_TRAN(&hungry);
             break;
         }
