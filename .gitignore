@@ -1,0 +1,4 @@
+examples/dpp/c-segger-rtt/**
+examples/dpp/mbed-os/**
+examples/dpp/BUILD/**
+examples/dpp/__pycache__/**

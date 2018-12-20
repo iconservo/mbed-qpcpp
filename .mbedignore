@@ -6,3 +6,4 @@ qpcpp/src/qs/*
 qpcpp/src/qv/*
 qpcpp/src/qk/*
 qpcpp/src/qxk/*
+qpcpp/src/qf/qf_qact.cpp

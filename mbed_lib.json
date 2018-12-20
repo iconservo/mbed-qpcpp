@@ -1,4 +1,6 @@
 {
   "name": "mbed-qpcpp",
-  "macros":[]
+  "macros": [
+    "QF_PORT_DEBUG=1"
+  ]
 }
